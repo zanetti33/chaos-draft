@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chaos Draft</title>
+  <meta name="description" content="Build a pool of Magic: The Gathering packs and draw them one at a time for a chaos draft.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎰</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Chaos Draft</h1>
+    <p class="tagline">Build a pool of packs, one per expansion, then pull them one at a time.</p>
+  </header>
+
+  <main class="layout">
+    <section class="panel" id="pool-panel" aria-labelledby="pool-title">
+      <div class="panel-head">
+        <h2 id="pool-title">Pack pool</h2>
+        <span class="count" id="pool-count">0 packs</span>
+      </div>
+
+      <div class="search">
+        <label for="set-search" class="sr-only">Add an expansion</label>
+        <input id="set-search" type="search" placeholder="Search expansions to add…" autocomplete="off" disabled>
+        <ul id="search-results" class="results" role="listbox" hidden></ul>
+      </div>
+
+      <div class="filters">
+        <label><input type="checkbox" id="include-all-types"> Include supplemental sets</label>
+      </div>
+
+      <div class="pool-actions">
+        <label class="inline">Add
+          <input type="number" id="random-n" min="1" max="50" value="8"> random
+        </label>
+        <button id="add-random" class="btn">Add</button>
+        <button id="share-pool" class="btn ghost" title="Copy a link that loads this pool">Share</button>
+        <button id="clear-pool" class="btn ghost danger">Clear</button>
+      </div>
+
+      <ul id="pool-list" class="pool"></ul>
+      <p id="pool-empty" class="empty">No packs yet. Search for an expansion or add a few at random.</p>
+      <p id="sets-status" class="muted small">Loading expansions from Scryfall…</p>
+    </section>
+
+    <section class="panel machine-panel" aria-labelledby="machine-title">
+      <div class="panel-head">
+        <h2 id="machine-title">Draw a pack</h2>
+        <span class="count" id="remaining-count">0 left</span>
+      </div>
+
+      <div class="machine">
+        <div class="lights" aria-hidden="true"></div>
+        <div class="reel-window" id="reel-window" aria-live="polite">
+          <div class="reel" id="reel"></div>
+          <div class="payline" aria-hidden="true"></div>
+        </div>
+        <div class="machine-controls">
+          <button id="draw" class="btn big" disabled>Pull the lever</button>
+          <button id="reset-draws" class="btn ghost">Put all packs back</button>
+        </div>
+      </div>
+
+      <div id="summary" class="summary" hidden></div>
+
+      <div class="history">
+        <h3>Drawn so far</h3>
+        <ol id="history-list"></ol>
+        <p id="history-empty" class="empty">Nothing drawn yet.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    Card data and images from <a href="https://scryfall.com" target="_blank" rel="noopener">Scryfall</a>.
+    Magic: The Gathering is © Wizards of the Coast. Not affiliated with or endorsed by Wizards of the Coast.
+  </footer>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="app.js" type="module"></script>
+</body>
+</html>
