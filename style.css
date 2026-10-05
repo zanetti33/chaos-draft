@@ -258,3 +258,12 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid 
 .pool-chips .chip { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; letter-spacing: 0.04em; }
 .pool-chips .set-icon { width: 16px; height: 16px; }
 .pool-chips .chip.drawn { opacity: 0.4; text-decoration: line-through; }
+
+/* wide draw page: slot machine and set summary side by side */
+body[data-page="draw"] .layout { max-width: 1680px; }
+.draw-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: start; }
+.draw-grid > .summary { margin-top: 0; }
+@media (min-width: 1100px) {
+  .draw-grid:has(> .summary:not([hidden])) { grid-template-columns: minmax(380px, 5fr) minmax(0, 7fr); }
+  .draw-grid:has(> .summary:not([hidden])) .draw-main { position: sticky; top: 16px; }
+}

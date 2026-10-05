@@ -539,6 +539,7 @@ function route() {
     page = 'pool';
     history.replaceState(null, '', `${location.pathname}${location.search}#/pool`);
   }
+  document.body.dataset.page = page;
   for (const s of document.querySelectorAll('[data-page]')) s.hidden = s.dataset.page !== page;
   for (const a of document.querySelectorAll('[data-nav]')) {
     if (a.dataset.nav === page) a.setAttribute('aria-current', 'page');
