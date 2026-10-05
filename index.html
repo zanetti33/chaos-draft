@@ -12,10 +12,14 @@
   <header class="top">
     <h1>Chaos Draft</h1>
     <p class="tagline">Build a pool of packs, one per expansion, then pull them one at a time.</p>
+    <nav class="steps" aria-label="Pages">
+      <a href="#/pool" data-nav="pool"><span class="step-n">1</span> Build the pool</a>
+      <a href="#/draw" data-nav="draw"><span class="step-n">2</span> Draw packs</a>
+    </nav>
   </header>
 
   <main class="layout">
-    <section class="panel" id="pool-panel" aria-labelledby="pool-title">
+    <section class="panel page" data-page="pool" id="pool-panel" aria-labelledby="pool-title" hidden>
       <div class="panel-head">
         <h2 id="pool-title">Pack pool</h2>
         <span class="count" id="pool-count">0 packs</span>
@@ -43,12 +47,21 @@
       <ul id="pool-list" class="pool"></ul>
       <p id="pool-empty" class="empty">No packs yet. Search for an expansion or add a few at random.</p>
       <p id="sets-status" class="muted small">Loading expansions from Scryfall…</p>
+
+      <div class="page-foot">
+        <a href="#/draw" id="go-draw" class="btn big">Start drawing →</a>
+      </div>
     </section>
 
-    <section class="panel machine-panel" aria-labelledby="machine-title">
+    <section class="panel page machine-panel" data-page="draw" aria-labelledby="machine-title" hidden>
       <div class="panel-head">
         <h2 id="machine-title">Draw a pack</h2>
         <span class="count" id="remaining-count">0 left</span>
+      </div>
+
+      <div class="draw-pool">
+        <ul id="draw-pool-chips" class="pool-chips" aria-label="Packs in the pool"></ul>
+        <a href="#/pool" class="btn ghost small">Edit pool</a>
       </div>
 
       <div class="machine">

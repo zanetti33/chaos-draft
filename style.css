@@ -232,3 +232,29 @@ input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid 
   .reel-icon { width: 40px; height: 40px; }
   .btn.big { font-size: 16px; padding: 11px 20px; }
 }
+
+/* two-page layout */
+.layout { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.page[hidden] { display: none; }
+
+.steps { display: flex; justify-content: center; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
+.steps a {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px;
+  color: var(--muted); text-decoration: none; border: 1px solid var(--line); background: var(--panel);
+  font-weight: 600;
+}
+.steps a:hover { color: var(--text); }
+.steps a[aria-current="page"] { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
+.step-n {
+  display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  font-size: 12px; background: rgba(0, 0, 0, 0.25);
+}
+
+.page-foot { display: flex; justify-content: center; margin-top: 20px; }
+.btn.disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+.draw-pool { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+.pool-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; flex: 1; min-width: 0; }
+.pool-chips .chip { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; letter-spacing: 0.04em; }
+.pool-chips .set-icon { width: 16px; height: 16px; }
+.pool-chips .chip.drawn { opacity: 0.4; text-decoration: line-through; }

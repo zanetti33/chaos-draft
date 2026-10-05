@@ -287,6 +287,18 @@ function render() {
     );
   }));
 
+  $('#draw-pool-chips').replaceChildren(...state.pool.map((code) => {
+    const drawn = state.drawn.includes(code);
+    return el('li', { class: `chip${drawn ? ' drawn' : ''}`, title: drawn ? `${setLabel(code)} (drawn)` : setLabel(code) },
+      setIcon(state.byCode.get(code)), code.toUpperCase());
+  }));
+  const goDraw = $('#go-draw');
+  goDraw.classList.toggle('disabled', !state.pool.length);
+  goDraw.setAttribute('aria-disabled', String(!state.pool.length));
+  goDraw.textContent = state.pool.length
+    ? `Start drawing (${state.pool.length} pack${state.pool.length === 1 ? '' : 's'}) →`
+    : 'Add packs to start drawing';
+
   const hist = $('#history-list');
   hist.replaceChildren(...state.drawn.map((code) => el('li', {},
     el('button', { class: 'link', onclick: () => showSummary(code) }, setIcon(state.byCode.get(code)), setLabel(code)),
@@ -493,8 +505,8 @@ function setupSearch() {
 
 // ---------- share links ----------
 
-function importFromHash() {
-  const m = location.hash.match(/pool=([a-z0-9,]+)/i);
+function importSharedPool() {
+  const m = (location.search + location.hash).match(/pool=([a-z0-9,]+)/i);
   if (!m) return;
   const codes = [...new Set(m[1].toLowerCase().split(',').filter((c) => state.byCode.has(c)))];
   if (codes.length && confirm(`Load a shared pool of ${codes.length} packs? This replaces your current pool.`)) {
@@ -502,14 +514,38 @@ function importFromHash() {
     state.drawn = [];
     save();
   }
-  history.replaceState(null, '', location.pathname + location.search);
+  history.replaceState(null, '', location.pathname + (state.pool.length ? '#/draw' : '#/pool'));
 }
 
 async function sharePool() {
   if (!state.pool.length) { toast('Add some packs first'); return; }
-  const url = `${location.origin}${location.pathname}#pool=${state.pool.join(',')}`;
+  const url = `${location.origin}${location.pathname}?pool=${state.pool.join(',')}`;
   try { await navigator.clipboard.writeText(url); toast('Share link copied'); }
   catch { prompt('Copy this link:', url); }
+}
+
+// ---------- pages ----------
+
+const PAGES = ['pool', 'draw'];
+
+function route() {
+  let page = location.hash.replace(/^#\/?/, '');
+  if (!PAGES.includes(page)) {
+    page = state.pool.length ? 'draw' : 'pool';
+    history.replaceState(null, '', `${location.pathname}${location.search}#/${page}`);
+  }
+  if (page === 'draw' && !state.pool.length) {
+    toast('Add some packs to the pool first');
+    page = 'pool';
+    history.replaceState(null, '', `${location.pathname}${location.search}#/pool`);
+  }
+  for (const s of document.querySelectorAll('[data-page]')) s.hidden = s.dataset.page !== page;
+  for (const a of document.querySelectorAll('[data-nav]')) {
+    if (a.dataset.nav === page) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  }
+  document.title = page === 'draw' ? 'Draw packs · Chaos Draft' : 'Build the pool · Chaos Draft';
+  window.scrollTo(0, 0);
 }
 
 // ---------- init ----------
@@ -518,6 +554,11 @@ async function init() {
   load();
   setupSearch();
   render();
+  route();
+  window.addEventListener('hashchange', route);
+  $('#go-draw').addEventListener('click', (e) => {
+    if (!state.pool.length) { e.preventDefault(); $('#set-search').focus(); }
+  });
 
   $('#draw').addEventListener('click', draw);
   $('#add-random').addEventListener('click', () => {
@@ -539,8 +580,9 @@ async function init() {
     await loadSets();
     $('#sets-status').textContent = `${state.sets.length} sets available from Scryfall.`;
     $('#set-search').disabled = false;
-    importFromHash();
+    importSharedPool();
     render();
+    route();
   } catch (e) {
     $('#sets-status').textContent = `Could not load sets from Scryfall (${e.message}). Reload to try again.`;
     $('#sets-status').classList.add('error');
